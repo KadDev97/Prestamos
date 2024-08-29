@@ -1,0 +1,111 @@
+.home-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.top-buttons button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.top-buttons button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.clients-list {
+    width: 100%;
+    max-width: 1000px; /* Ajustado para dispositivos más pequeños */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
+}
+
+.clients-list h2 {
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.clients-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.clients-list th, .clients-list td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px; /* Tamaño de fuente reducido para pantallas pequeñas */
+}
+
+.clients-list th {
+    background-color: #006728;
+    color: #ffffff;
+}
+
+.clients-list td {
+    background-color: #fff;
+}
+
+.clients-list button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #006728;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px; /* Tamaño de fuente reducido para pantallas pequeñas */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.clients-list button:hover {
+    background-color: #258e4d;
+    transform: scale(1.05);
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 600px) {
+    .top-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-buttons button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .clients-list {
+        padding: 10px;
+    }
+
+    .clients-list th, .clients-list td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .clients-list button {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+}
