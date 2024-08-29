@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import './style.css';
 
 const Home = () => {
@@ -7,31 +8,37 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Simular la carga inicial de clientes (esto debe ser reemplazado por una carga real si es necesario)
-        setClients([
-            { id: 1, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 2, name: 'Ana Gómez', phone: '0987654321', address: 'Avenida Siempre Viva 456', idNumber: '987654321' },
-            { id: 3, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 4, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 5, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 6, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 7, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 8, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 9, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 10, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 11, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 12, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 13, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 14, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 15, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-            { id: 16, name: 'Juan Pérez', phone: '1234567890', address: 'Calle Falsa 123', idNumber: '123456789' },
-
-
-        ]);
+        // Cargar clientes desde localStorage
+        const storedClients = JSON.parse(localStorage.getItem('clients')) || [];
+        setClients(storedClients);
     }, []);
 
     const handleViewLoan = (clientId) => {
         navigate(`/client-loan/${clientId}`);
+    };
+
+    const handleDeleteClient = (clientId) => {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡Este cliente será eliminado!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedClients = clients.filter(client => client.id !== clientId);
+                setClients(updatedClients);
+                localStorage.setItem('clients', JSON.stringify(updatedClients));
+                Swal.fire(
+                    'Eliminado',
+                    'El cliente ha sido eliminado.',
+                    'success'
+                );
+            }
+        });
     };
 
     return (
@@ -57,6 +64,7 @@ const Home = () => {
                                 <td>{client.idNumber}</td>
                                 <td>
                                     <button onClick={() => handleViewLoan(client.id)}>Ver Préstamo</button>
+                                    <button onClick={() => handleDeleteClient(client.id)}>Eliminar</button>
                                 </td>
                             </tr>
                         ))}

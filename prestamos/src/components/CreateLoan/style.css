@@ -1,49 +1,42 @@
-.create-loan-container {
+.create-loan-page {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
     font-family: 'Arial', sans-serif;
+    /* No se establece fondo aquí para permitir que la página mantenga el fondo actual */
 }
 
-.create-loan-container .modal {
+.header {
     display: flex;
     justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.3);
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    z-index: 1000;
+    margin-bottom: 20px;
 }
 
-.create-loan-container .modal-content {
-    background: #ffffff;
+
+.form-container {
+    background-color: #ffffff; /* Fondo blanco para el formulario */
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow-y: auto;
-    width: 600px;
-    position: relative;
+    width: 100%;
+    max-width: 600px;
 }
 
-.create-loan-container h2 {
+h2 {
     margin-top: 0;
     text-align: center;
     font-size: 24px;
 }
 
-.create-loan-container form {
+form {
     display: flex;
     flex-direction: column;
 }
 
-.create-loan-container input, .create-loan-container select {
+input, select {
     width: 100%;
     box-sizing: border-box;
     margin-bottom: 15px;
@@ -53,11 +46,11 @@
     font-size: 16px;
 }
 
-.create-loan-container button {
+button {
     padding: 12px;
     border: none;
     border-radius: 8px;
-    background-color:  #006728;
+    background-color: #006728;
     color: #ffffff;
     cursor: pointer;
     font-size: 16px;
@@ -65,18 +58,25 @@
     margin: 5px;
 }
 
-.create-loan-container button:hover {
-    background-color:  #83c39b;
+button:hover {
+    background-color: #83c39b;
     transform: scale(1.05);
 }
 
-.create-loan-container .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #dc3545;
-    cursor: pointer;
+/* Estilos para dispositivos móviles */
+@media (max-width: 600px) {
+   
+    h2 {
+        font-size: 20px;
+    }
+
+    input, select {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
 }

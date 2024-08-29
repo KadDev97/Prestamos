@@ -1,106 +1,154 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './style.css';
-import Logo from '../../img/Logo.png';  // Asegúrate de que la ruta sea correcta
 
 const ClientLoan = () => {
-    const initialAmount = 1000000; // Monto inicial del préstamo en colones
-    const interestRate = 5; // Tasa de interés en porcentaje
-    const numInstallments = 12; // Cantidad de cuotas
-
+    const { clientId } = useParams();
+    const [loan, setLoan] = useState(null);
     const [payments, setPayments] = useState([]);
-    const [newPayment, setNewPayment] = useState('');
-    const [remainingBalance, setRemainingBalance] = useState(initialAmount);
+    const [paymentAmount, setPaymentAmount] = useState('');
+    const [paymentDate, setPaymentDate] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Calcular el saldo actual
-        const totalAmountWithInterest = initialAmount * (1 + (interestRate / 100));
-        setRemainingBalance(totalAmountWithInterest);
-    }, []);
+        const storedLoans = JSON.parse(localStorage.getItem('loans')) || [];
+        const currentLoan = storedLoans.find(loan => loan.clientId === clientId);
+        setLoan(currentLoan || null);
+
+        const storedPayments = JSON.parse(localStorage.getItem('payments')) || [];
+        setPayments(storedPayments.filter(payment => payment.clientId === clientId));
+    }, [clientId]);
 
     const handleAddPayment = (e) => {
         e.preventDefault();
-        const paymentAmount = parseFloat(newPayment);
+        if (loan && paymentAmount) {
+            const newPayment = {
+                clientId,
+                amount: parseFloat(paymentAmount),
+                date: paymentDate || new Date().toISOString()
+            };
 
-        // Validar que el monto sea un número positivo
-        if (isNaN(paymentAmount) || paymentAmount <= 0) {
-            alert('Ingrese un monto válido');
-            return;
+            const updatedPayments = [...payments, newPayment];
+            localStorage.setItem('payments', JSON.stringify(updatedPayments));
+            setPayments(updatedPayments);
+            setPaymentAmount('');
+            setPaymentDate('');
         }
+    };
 
-        // Validar que el saldo no sea negativo
-        if (remainingBalance - paymentAmount < 0) {
-            alert('El monto del pago excede el saldo restante');
-            return;
+    const calculateTotalAmount = () => {
+        if (loan) {
+            const totalAmount = parseFloat(loan.amount) + (parseFloat(loan.amount) * parseFloat(loan.interest) / 100 * parseInt(loan.installments));
+            return totalAmount;
         }
+        return 0;
+    };
 
-        // Agregar el nuevo pago
-        setPayments([...payments, {
-            date: new Date().toLocaleDateString(),
-            amount: paymentAmount,
-            remainingBalance: (remainingBalance - paymentAmount).toFixed(2)
-        }]);
-        setRemainingBalance((remainingBalance - paymentAmount).toFixed(2));
-        setNewPayment('');
+    const calculateInstallmentAmount = () => {
+        if (loan) {
+            const totalAmount = calculateTotalAmount();
+            return totalAmount / parseInt(loan.installments);
+        }
+        return 0;
+    };
+
+    const calculateOutstandingAmount = () => {
+        const totalAmount = calculateTotalAmount();
+        const totalPaid = payments.reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
+        return totalAmount - totalPaid;
+    };
+
+    const calculateTotalInterest = () => {
+        if (loan) {
+            const totalAmount = calculateTotalAmount();
+            return totalAmount - parseFloat(loan.amount);
+        }
+        return 0;
+    };
+
+    const calculateLateFee = () => {
+        const lateFees = payments.reduce((acc, payment) => {
+            const paymentDate = new Date(payment.date);
+            const dueDate = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1);
+            if (paymentDate > dueDate) {
+                const daysLate = Math.ceil((paymentDate - dueDate) / (1000 * 60 * 60 * 24));
+                const fee = (parseFloat(loan.lateFee) / 100) * daysLate;
+                acc += fee;
+            }
+            return acc;
+        }, 0);
+        return lateFees;
     };
 
     return (
-        <div className="client-loan-container">
-            <div className="client-loan-details">
-                <img src={Logo} alt="Logo" className="auth-logo" />  {/* Imagen agregada aquí */}
-
-                <h2>Detalles del Préstamo</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Monto Inicial (₡)</th>
-                            <th>Intereses (%)</th>
-                            <th>Modalidad de Pago</th>
-                            <th>Cantidad de Cuotas</th>
-                            <th>Saldo Actual (₡)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {/* Datos del préstamo, ejemplo */}
-                        <tr>
-                            <td>₡{initialAmount}</td>
-                            <td>{interestRate}%</td>
-                            <td>Mensual</td>
-                            <td>{numInstallments}</td>
-                            <td>₡{remainingBalance}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <h3>Historial de Pagos</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Pago (₡)</th>
-                        <th>Saldo Restante (₡)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {payments.map((payment, index) => (
-                        <tr key={index}>
-                            <td>{payment.date}</td>
-                            <td>₡{payment.amount}</td>
-                            <td>₡{payment.remainingBalance}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <h3>Agregar Pago</h3>
-            <form onSubmit={handleAddPayment}>
-                <input
-                    type="number"
-                    value={newPayment}
-                    onChange={(e) => setNewPayment(e.target.value)}
-                    placeholder="Monto del Pago (₡)"
-                    required
-                />
-                <button type="submit">Agregar Pago</button>
-            </form>
+        <div className="client-loan-page">
+            <header className="header">
+            </header>
+            <main className="details-container">
+                <div className="loan-details" style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px' }}>
+                    <h2>Detalles del Préstamo</h2>
+                    {loan ? (
+                        <div className="loan-detail-info">
+                            <p><strong>Monto Inicial:</strong> ₡{loan.amount}</p>
+                            <p><strong>Intereses:</strong> {loan.interest}%</p>
+                            <p><strong>Interés de Mora por Día:</strong> {loan.lateFee}%</p>
+                            <p><strong>Modalidad de Pago:</strong> {loan.paymentMode}</p>
+                            <p><strong>Cantidad de Cuotas:</strong> {loan.installments}</p>
+                            <p><strong>Total del Préstamo:</strong> ₡{calculateTotalAmount().toFixed(2)}</p>
+                            <p><strong>Monto por Cuota:</strong> ₡{calculateInstallmentAmount().toFixed(2)}</p>
+                        </div>
+                    ) : (
+                        <p>No se encontraron detalles del préstamo.</p>
+                    )}
+                </div>
+                <div className="payment-form">
+                    <h2>Agregar Pago</h2>
+                    <form onSubmit={handleAddPayment}>
+                        <input
+                            type="number"
+                            placeholder="Monto del Pago (₡)"
+                            value={paymentAmount}
+                            onChange={(e) => setPaymentAmount(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="date"
+                            placeholder="Fecha del Pago"
+                            value={paymentDate}
+                            onChange={(e) => setPaymentDate(e.target.value)}
+                        />
+                        <button type="submit">Agregar Pago</button>
+                    </form>
+                </div>
+                <div className="payment-history">
+                    <h2>Historial de Pagos</h2>
+                    <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px' }}>
+                        <p><strong>Saldo Actual:</strong> ₡{(calculateOutstandingAmount() + calculateLateFee()).toFixed(2)}</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {payments.length > 0 ? (
+                                    payments.map((payment, index) => (
+                                        <tr key={index}>
+                                            <td>{new Date(payment.date).toLocaleDateString()}</td>
+                                            <td>₡{payment.amount.toFixed(2)}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="2">No hay pagos registrados.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
         </div>
     );
 };

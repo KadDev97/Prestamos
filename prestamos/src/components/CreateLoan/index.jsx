@@ -1,92 +1,119 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useClients } from '../../contexts/ClientContext';
 import './style.css';
 import Logo from '../../img/Logo.png';  // Asegúrate de que la ruta sea correcta
 
-
 const CreateLoan = () => {
-    const { clients } = useClients(); // Obtén los clientes del contexto
-    const [selectedClient, setSelectedClient] = useState('');
-    const [loanDetails, setLoanDetails] = useState({ amount: '', interest: '', paymentMode: '', installments: '' });
+    const [clients, setClients] = useState([]);
+    const [selectedClientId, setSelectedClientId] = useState('');
+    const [selectedClientName, setSelectedClientName] = useState('');
+    const [loanDetails, setLoanDetails] = useState({
+        amount: '',
+        interest: '',
+        lateFee: '',
+        paymentMode: '',
+        installments: ''
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Verifica el estado de clients
-        console.log('Clientes disponibles:', clients);
-    }, [clients]);
+        // Cargar clientes desde localStorage
+        const storedClients = JSON.parse(localStorage.getItem('clients')) || [];
+        setClients(storedClients);
+    }, []);
+
+    useEffect(() => {
+        if (selectedClientId) {
+            const client = clients.find(client => client.id === selectedClientId);
+            setSelectedClientName(client ? client.name : '');
+        }
+    }, [selectedClientId, clients]);
 
     const handleCreateLoan = (e) => {
         e.preventDefault();
-        if (selectedClient) {
-            // Lógica para crear el préstamo
-            console.log('Creating loan for client ID:', selectedClient, 'with details:', loanDetails);
-            navigate('/'); // Redirige al Home después de crear el préstamo
+        if (selectedClientId) {
+            const newLoan = {
+                clientId: selectedClientId,
+                clientName: selectedClientName,
+                ...loanDetails
+            };
+
+            // Guardar préstamo en localStorage
+            const storedLoans = JSON.parse(localStorage.getItem('loans')) || [];
+            storedLoans.push(newLoan);
+            localStorage.setItem('loans', JSON.stringify(storedLoans));
+
+            navigate(`/client-loan/${selectedClientId}`); // Redirige al detalle del préstamo después de crear el préstamo
         } else {
             alert('Seleccione un cliente');
         }
     };
 
     return (
-        <div className="create-loan-container">
-            <div className="modal">
-                <div className="modal-content">
-                    <button className="close-button" onClick={() => navigate('/')}>×</button>
-                    <img src={Logo} alt="Logo" className="auth-logo" />  {/* Imagen agregada aquí */}
-
-                    <h2>Crear Préstamo</h2>
-                    <form onSubmit={handleCreateLoan}>
-                        <select
-                            value={selectedClient}
-                            onChange={(e) => setSelectedClient(e.target.value)}
-                            required
-                        >
-                            <option value="">Seleccionar Cliente</option>
-                            {clients && clients.length > 0 ? (
-                                clients.map(client => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.name}
-                                    </option>
-                                ))
-                            ) : (
-                                <option value="">No hay clientes disponibles</option>
-                            )}
-                        </select>
-                        <input
-                            type="number"
-                            placeholder="Monto Inicial (₡)"
-                            value={loanDetails.amount}
-                            onChange={(e) => setLoanDetails({ ...loanDetails, amount: e.target.value })}
-                            required
-                        />
-                        <input
-                            type="number"
-                            placeholder="Intereses (%)"
-                            value={loanDetails.interest}
-                            onChange={(e) => setLoanDetails({ ...loanDetails, interest: e.target.value })}
-                            required
-                        />
-                        <select
-                            value={loanDetails.paymentMode}
-                            onChange={(e) => setLoanDetails({ ...loanDetails, paymentMode: e.target.value })}
-                            required
-                        >
-                            <option value="">Modalidad de Pago</option>
-                            <option value="semanal">Semanal</option>
-                            <option value="quincenal">Quincenal</option>
-                            <option value="mensual">Mensual</option>
-                        </select>
-                        <input
-                            type="number"
-                            placeholder="Cantidad de Cuotas"
-                            value={loanDetails.installments}
-                            onChange={(e) => setLoanDetails({ ...loanDetails, installments: e.target.value })}
-                            required
-                        />
-                        <button type="submit">Crear</button>
-                    </form>
-                </div>
-            </div>
+        <div className="create-loan-page">
+            <header className="header">
+            </header>
+            <main className="form-container">
+                <img src={Logo} alt="Logo" className="header-logo" />
+                <h2>Crear Préstamo</h2>
+                <form onSubmit={handleCreateLoan}>
+                    <select
+                        value={selectedClientId}
+                        onChange={(e) => setSelectedClientId(e.target.value)}
+                        required
+                    >
+                        <option value="">Seleccionar Cliente</option>
+                        {clients.length > 0 ? (
+                            clients.map(client => (
+                                <option key={client.id} value={client.id}>
+                                    {client.name}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">No hay clientes disponibles</option>
+                        )}
+                    </select>
+                    <input
+                        type="number"
+                        placeholder="Monto Inicial (₡)"
+                        value={loanDetails.amount}
+                        onChange={(e) => setLoanDetails({ ...loanDetails, amount: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="number"
+                        placeholder="Intereses (%)"
+                        value={loanDetails.interest}
+                        onChange={(e) => setLoanDetails({ ...loanDetails, interest: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="number"
+                        placeholder="Interés de Mora por Día (%)"
+                        value={loanDetails.lateFee}
+                        onChange={(e) => setLoanDetails({ ...loanDetails, lateFee: e.target.value })}
+                        required
+                    />
+                    <select
+                        value={loanDetails.paymentMode}
+                        onChange={(e) => setLoanDetails({ ...loanDetails, paymentMode: e.target.value })}
+                        required
+                    >
+                        <option value="">Modalidad de Pago</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="quincenal">Quincenal</option>
+                        <option value="mensual">Mensual</option>
+                    </select>
+                    <input
+                        type="number"
+                        placeholder="Cantidad de Cuotas"
+                        value={loanDetails.installments}
+                        onChange={(e) => setLoanDetails({ ...loanDetails, installments: e.target.value })}
+                        required
+                    />
+                    <button type="submit">Crear</button>
+                </form>
+            </main>
         </div>
     );
 };
