@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import Logo from '../../img/Logo.png';  // Asegúrate de que la ruta sea correcta
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = Navigate();
+    const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
