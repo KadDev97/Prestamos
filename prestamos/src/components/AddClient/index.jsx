@@ -9,12 +9,17 @@ const AddClient = () => {
 
     const handleAddClient = (e) => {
         e.preventDefault();
+        if (!newClient.name || !newClient.phone || !newClient.address || !newClient.idNumber) {
+            alert('Por favor, complete todos los campos.');
+            return;
+        }
         const newClientId = Date.now(); // Genera un ID único
         const storedClients = JSON.parse(localStorage.getItem('clients')) || [];
         const updatedClients = [...storedClients, { ...newClient, id: newClientId }];
         localStorage.setItem('clients', JSON.stringify(updatedClients));
         navigate('/'); // Redirige al Home
     };
+    
 
     return (
         <div className="add-client-page">

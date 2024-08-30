@@ -41,10 +41,17 @@ const Home = () => {
         });
     };
 
+    const handleViewFinancialReport = () => {
+        navigate('/financial-report');
+    };
+
     return (
         <div className="home-container">
             <div className="clients-list">
                 <h2>Lista de Clientes</h2>
+                <button onClick={handleViewFinancialReport} className="view-report-button">
+                    Ver Reporte Financiero
+                </button>
                 <table>
                     <thead>
                         <tr>

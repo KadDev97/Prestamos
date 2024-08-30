@@ -28,26 +28,29 @@ const CreateLoan = () => {
             setSelectedClientName(client ? client.name : '');
         }
     }, [selectedClientId, clients]);
-
     const handleCreateLoan = (e) => {
         e.preventDefault();
-        if (selectedClientId) {
-            const newLoan = {
-                clientId: selectedClientId,
-                clientName: selectedClientName,
-                ...loanDetails
-            };
-
-            // Guardar préstamo en localStorage
-            const storedLoans = JSON.parse(localStorage.getItem('loans')) || [];
-            storedLoans.push(newLoan);
-            localStorage.setItem('loans', JSON.stringify(storedLoans));
-
-            navigate(`/client-loan/${selectedClientId}`); // Redirige al detalle del préstamo después de crear el préstamo
-        } else {
+        if (!selectedClientId) {
             alert('Seleccione un cliente');
+            return;
         }
+        if (!loanDetails.amount || !loanDetails.interest || !loanDetails.lateFee || !loanDetails.installments) {
+            alert('Por favor, complete todos los campos del préstamo.');
+            return;
+        }
+        const newLoan = {
+            clientId: selectedClientId,
+            clientName: selectedClientName,
+            ...loanDetails
+        };
+    
+        const storedLoans = JSON.parse(localStorage.getItem('loans')) || [];
+        storedLoans.push(newLoan);
+        localStorage.setItem('loans', JSON.stringify(storedLoans));
+    
+        navigate(`/client-loan/${selectedClientId}`); // Redirige al detalle del préstamo después de crear el préstamo
     };
+    
 
     return (
         <div className="create-loan-page">

@@ -7,7 +7,9 @@ import ClientLoan from './components/ClientLoan/index';
 import Navbar from './components/Navbar/index';
 import AddClient from './components/AddClient/index';
 import CreateLoan from './components/CreateLoan/index';
+import NotFound from './components/NotFound/index'; // Componente para página no encontrada
 import { ClientProvider } from './contexts/ClientContext';
+import FinancialReport from './components/FinancialReport/index';
 import './App.css';
 
 const App = () => {
@@ -21,6 +23,8 @@ const App = () => {
                     <Route path="/add-client" element={<><Navbar /><AddClient /></>} />
                     <Route path="/create-loan" element={<><Navbar /><CreateLoan /></>} />
                     <Route path="/client-loan/:clientId" element={<><Navbar /><ClientLoan /></>} />
+                    <Route path="/financial-report" element={<><Navbar /><FinancialReport /></>} />
+                    <Route path="*" element={<NotFound />} /> 
                 </Routes>
             </Router>
         </ClientProvider>
