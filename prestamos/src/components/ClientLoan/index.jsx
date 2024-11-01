@@ -88,15 +88,16 @@ const ClientLoan = () => {
                 <div className="loan-details" style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px' }}>
                     <h2>Detalles del Préstamo</h2>
                     {loan ? (
-                        <div className="loan-detail-info">
-                            <p><strong>Monto Inicial:</strong> ₡{loan.amount}</p>
-                            <p><strong>Intereses:</strong> {loan.interest}%</p>
-                            <p><strong>Interés de Mora por Día:</strong> {loan.lateFee}%</p>
-                            <p><strong>Modalidad de Pago:</strong> {loan.paymentMode}</p>
-                            <p><strong>Cantidad de Cuotas:</strong> {loan.installments}</p>
-                            <p><strong>Total del Préstamo:</strong> ₡{calculateTotalAmount().toFixed(2)}</p>
-                            <p><strong>Monto por Cuota:</strong> ₡{calculateInstallmentAmount().toFixed(2)}</p>
-                        </div>
+                      <div className="loan-detail-info">
+                      <p><strong>Monto Inicial:</strong> ₡{loan.amount}</p>
+                      <p><strong>Intereses:</strong> {loan.interest}%</p>
+                      <p><strong>Interés de Mora por Día:</strong> {loan.lateFee}%</p>
+                      <p><strong>Modalidad de Pago:</strong> {loan.paymentMode}</p>
+                      <p><strong>Cantidad de Cuotas:</strong> {loan.installments}</p>
+                      <p><strong>Total del Préstamo:</strong> ₡{calculateTotalAmount().toFixed(2)}</p>
+                      <p><strong>Monto por Cuota:</strong> ₡{calculateInstallmentAmount().toFixed(2)}</p>
+                      <p><strong>Interés Total:</strong> ₡{calculateTotalInterest().toFixed(2)}</p> {/* Nueva línea */}
+                  </div>
                     ) : (
                         <p>No se encontraron detalles del préstamo.</p>
                     )}

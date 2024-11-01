@@ -36,23 +36,28 @@ const FinancialReport = () => {
         setPayments(storedPayments);
     }, []);
 
-    // Datos filtrados por rango de fechas
+    // Filtrar pagos por rango de fechas
     const filteredPayments = filterPaymentsByDateRange(payments, startDate, endDate);
 
-    // Cálculos financieros
+    // Calcular totales
     const totalClients = clients.length;
     const totalLoanAmount = loans.reduce((acc, loan) => acc + parseFloat(loan.amount), 0);
-    const totalPaid = filteredPayments.reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
-    const outstandingAmount = totalLoanAmount - totalPaid;
+    
+    // Total de todos los pagos
+    const totalPaid = payments.reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
+    // Calcular el interés total de todos los préstamos
+    const totalInterest = loans.reduce((acc, loan) => {
+    return acc + ((parseFloat(loan.amount) * parseFloat(loan.interest) / 100) * parseInt(loan.installments));
+     }, 0);
+   // Monto pendiente basado en el total de préstamos, los intereses y el total de pagos realizados
+    const outstandingAmount = (totalLoanAmount + totalInterest) - totalPaid;
 
-    const totalInterest = loans.reduce((acc, loan) => acc + ((parseFloat(loan.amount) * parseFloat(loan.interest) / 100) * parseInt(loan.installments)), 0);
-    const totalInterestEarned = filteredPayments.reduce((acc, payment) => acc + (parseFloat(payment.amount) - (parseFloat(payment.amount) * parseFloat(loans.find(loan => loan.clientId === payment.clientId).interest) / 100)), 0);
 
     const dataBar = {
         labels: ['Total Préstamos', 'Monto Pagado', 'Monto Pendiente', 'Ganancia Intereses'],
         datasets: [{
             label: 'Resumen Financiero',
-            data: [totalLoanAmount, totalPaid, outstandingAmount, totalInterestEarned],
+            data: [totalLoanAmount, totalPaid, outstandingAmount, totalInterest],
             backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#e74a3b'],
         }]
     };
@@ -60,20 +65,19 @@ const FinancialReport = () => {
     const dataPie = {
         labels: ['Monto Pagado en Intereses', 'Monto Pagado en Capital'],
         datasets: [{
-            data: [totalInterestEarned, totalPaid - totalInterestEarned],
+            data: [totalInterest, totalPaid - totalInterest],
             backgroundColor: ['#ff6384', '#36a2eb'],
         }]
     };
 
+    // Opciones para los gráficos
     const optionsBar = {
         responsive: true,
         plugins: {
             legend: {
                 position: 'top',
                 labels: {
-                    font: {
-                        size: 14
-                    }
+                    font: { size: 14 }
                 }
             },
             tooltip: {
@@ -83,26 +87,8 @@ const FinancialReport = () => {
             }
         },
         scales: {
-            x: {
-                grid: {
-                    color: '#e0e0e0'
-                },
-                ticks: {
-                    font: {
-                        size: 14
-                    }
-                }
-            },
-            y: {
-                grid: {
-                    color: '#e0e0e0'
-                },
-                ticks: {
-                    font: {
-                        size: 14
-                    }
-                }
-            }
+            x: { grid: { color: '#e0e0e0' }, ticks: { font: { size: 14 } } },
+            y: { grid: { color: '#e0e0e0' }, ticks: { font: { size: 14 } } }
         }
     };
 
@@ -112,9 +98,7 @@ const FinancialReport = () => {
             legend: {
                 position: 'top',
                 labels: {
-                    font: {
-                        size: 14
-                    }
+                    font: { size: 14 }
                 }
             },
             tooltip: {
@@ -166,7 +150,7 @@ const FinancialReport = () => {
                     </div>
                     <div className="card">
                         <h3>Ganancia de Intereses</h3>
-                        <p>{formatCurrency(totalInterestEarned)}</p>
+                        <p>{formatCurrency(totalInterest)}</p>
                     </div>
                 </div>
                 <div className="charts">
