@@ -11,7 +11,7 @@ const Navbar = () => {
     const handleLogout = () => {
         navigate('/login'); // Redirige al login
     };
-
+    
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
     };
