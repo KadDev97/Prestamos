@@ -36,7 +36,7 @@
 }
 
 /* Styles para móvil */
-@media (max-width: 768px) {
+@media (max-width: 1768px) {
     .navbar-links {
         position: absolute;
         top: 60px; /* Ajusta según la altura de tu navbar */
