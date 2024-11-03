@@ -22,7 +22,7 @@ const Navbar = () => {
                 <Link to="/" className="navbar-link">Lista de Clientes</Link>
                 <Link to="/add-client" className="navbar-link">Añadir Cliente</Link>
                 <Link to="/create-loan" className="navbar-link">Crear Préstamo</Link>
-                <span onClick={handleLogout} className="logout-link">Cerrar Sesión</span>
+                {/*<span onClick={handleLogout} className="logout-link">Cerrar Sesión</span>*/}
             </div>
         </nav>
     );

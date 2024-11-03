@@ -17,8 +17,8 @@ const App = () => {
         <ClientProvider>
             <Router>
                 <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                    {/*<Route path="/login" element={<Login />} />*/}
+                    {/*<Route path="/register" element={<Register />} />*/}
                     <Route path="/" element={<><Navbar /><Home /></>} />
                     <Route path="/add-client" element={<><Navbar /><AddClient /></>} />
                     <Route path="/create-loan" element={<><Navbar /><CreateLoan /></>} />
