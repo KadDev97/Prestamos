@@ -1,30 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import './style.css';
-import Logo from '../../img/Logo.png'; // Asegúrate de que la ruta sea correcta
+import Logo from '../../img/Logo.png'; 
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleLogout = () => {
-        // Aquí iría la lógica para cerrar sesión, por ejemplo, eliminar el token de autenticación
         navigate('/login'); // Redirige al login
     };
 
+    const toggleSidebar = () => {
+        setIsOpen(!isOpen);
+    };
+
     return (
-        <nav className="navbar">
+        <div className="navbar">
             <div className="navbar-logo">
+                <div className="hamburger" onClick={toggleSidebar}>
+                    {isOpen ? <FaTimes /> : <FaBars />}
+                </div>
+            </div>
+            <div className={`navbar-links ${isOpen ? 'open' : ''}`}>
                 <Link to="/">
-                    <img src={Logo} alt="Logo de la Empresa" />
+                    <img className='logonav' src={Logo} alt="Logo de la Empresa" />
                 </Link>
+                <Link to="/" className="navbar-link">Lista de clientes</Link>
+                <Link to="/add-client" className="navbar-link">Crear cliente</Link>
+                <Link to="/create-loan" className="navbar-link">Crear préstamo</Link>
             </div>
-            <div className="navbar-links">
-                <Link to="/" className="navbar-link">Lista de Clientes</Link>
-                <Link to="/add-client" className="navbar-link">Añadir Cliente</Link>
-                <Link to="/create-loan" className="navbar-link">Crear Préstamo</Link>
-                {/*<span onClick={handleLogout} className="logout-link">Cerrar Sesión</span>*/}
-            </div>
-        </nav>
+        </div>
     );
 };
 
